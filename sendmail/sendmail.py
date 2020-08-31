@@ -121,4 +121,49 @@ def sendmessage_attach(email_id,subject,mssg,file_path):
                .execute())
   except urllib.error.HTTPError as error:
     print('An error occurred: %s' % error)
+def sendhtmlmssg(email_addrss,subject,html,text = None):
+    msg = MIMEMultipart()
+    msg['Subject'] = subject
+    msg['From'] = 'me'
+    msg['To'] = email_addrss
+    if text:
+        part1 = MIMEText(text, 'plain')
+        msg.attach(part1)
+    part2 = MIMEText(html, 'html')
+    msg.attach(part2)
+    mssg_to_be_send = {'raw': base64.urlsafe_b64encode(msg.as_string().encode()).decode()}
+    try:
+        message = (creds.messages().send(userId="me", body=mssg_to_be_send)
+               .execute())
+    except urllib.error.HTTPError as error:
+        print('An error occurred: %s' % error)
+"""Retrieve an attachment from a Message.
+"""
+def GetAttachments( msg_id, store_dir):
+  """Get and store attachment from Message with given id.
+
+  Args:
+    service: Authorized Gmail API service instance.
+    user_id: User's email address. The special value "me"
+    can be used to indicate the authenticated user.
+    msg_id: ID of Message containing attachment.
+    store_dir: The directory used to store attachments.
+  """
+  try:
+    message = creds.messages().get(userId="me", id=msg_id).execute()
+
+    for part in message['payload']['parts']:
+      if part['filename']:
+
+        file_data = base64.urlsafe_b64decode(part['body']['data']
+                                             .encode('UTF-8'))
+
+        path = ''.join([store_dir, part['filename']])
+
+        f = open(path, 'w')
+        f.write(file_data)
+        f.close()
+
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)
 creds = credentialcreater()
