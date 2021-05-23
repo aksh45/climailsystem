@@ -6,12 +6,12 @@ $ pip3 install climailsystem
 You can use this module as command line tool or you can use it as python module
 ## CLI Guide
 ```
-$ sendmail --help
+$ climail --help
 ```
 This will give show You all the valid commands available
 
 ```
-Usage: sendmail [OPTIONS] COMMAND [ARGS]...
+Usage: climail [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --help  Show this message and exit.
@@ -26,8 +26,8 @@ Commands:
 ```
 arguments of command
 ```
-$ sendmail sendmessage --help
-Usage: sendmail sendmessage [OPTIONS] EMAIL_ID_OF_SENDER SUBJECT MSSG
+$ climail sendmessage --help
+Usage: climail sendmessage [OPTIONS] EMAIL_ID_OF_SENDER SUBJECT MSSG
 
 Options:
   --help  Show this message and exit.

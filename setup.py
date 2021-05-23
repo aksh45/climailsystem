@@ -25,6 +25,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        sendmail=sendmail.__main__:main
+        climail=sendmail.__main__:main
     ''',
 )

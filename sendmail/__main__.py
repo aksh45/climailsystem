@@ -35,9 +35,9 @@ def sendmessage_attach(email_id,subject,mssg,file_path):
 @click.command()
 @click.argument('email_adrss')
 @click.argument('subject')
-@click.option('htmlfile',help="enter the complete address for html mail file")
-@click.option('html',help="Enter the html mail to send")
-@click.option('text')
+@click.argument('htmlfile',required = False)
+@click.argument('html',required = False)
+@click.argument('text',required = False)
 def sendhtml(email_adrss,subject,html_file = None,html = None,text = None):
     if html_file:
         htm = ""
