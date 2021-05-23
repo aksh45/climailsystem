@@ -6,7 +6,7 @@ with io.open(os.path.join(current, 'README.md'), encoding="utf-8") as f:
     long_description = f.read()
 setup(
     name='climailsystem',
-    version='0.11',
+    version='0.111',
     author = 'Akshit Ahuja',
     author_email = "techsyapa@gmail.com",
     description = "A small Package for sending  mails from cli",

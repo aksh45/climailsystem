@@ -8,7 +8,7 @@ You can use this module as command line tool or you can use it as python module
 ```
 $ climail --help
 ```
-This will give show You all the valid commands available
+This will show You all the valid commands available
 
 ```
 Usage: climail [OPTIONS] COMMAND [ARGS]...
