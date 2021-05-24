@@ -4,4 +4,7 @@ from .sendmail import(
         login,
         sendmessage,
         sendmessage_attach,
-        usermessagedetails)
+        usermessagedetails,
+        GetLabels,
+        get_messages_info,
+        get_message)

@@ -9,7 +9,7 @@ setup(
     version='0.111',
     author = 'Akshit Ahuja',
     author_email = "techsyapa@gmail.com",
-    description = "A small Package for sending  mails from cli",
+    description = "A small Package for sending and receiving mails from cli",
     url = "https://github.com/aksh45/climailsystem",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -21,7 +21,7 @@ setup(
     packages=['sendmail'],
     include_package_data=True,
     install_requires=[
-        'Click','pybase64','google-api-python-client','google-auth-httplib2','google-auth-oauthlib'
+        'Click','pybase64','google-api-python-client','google-auth-httplib2','google-auth-oauthlib','mail-parser'
     ],
     entry_points='''
         [console_scripts]
