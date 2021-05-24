@@ -33,6 +33,11 @@ def sendmessage_attach(email_id,subject,mssg,file_path):
     click.echo('Sending Email')
     sm.sendmessage_attach(email_id,subject,mssg,file_path)
 @click.command()
+def getlabels():
+    data = sm.GetLabels()
+    l = [[x['id'],x['name']] for x in data['labels']]
+    printf(l,['Id','Name'])
+@click.command()
 @click.argument('email_adrss')
 @click.argument('subject')
 @click.argument('htmlfile',required = False)
@@ -47,11 +52,47 @@ def sendhtml(email_adrss,subject,html_file = None,html = None,text = None):
         sm.sendhtmlmssg(email_adrss,subject,htm,text)
     else:
         sm.sendhtmlmssg(email_adrss,subject,html,text)
-main.add_command(sendmessage);
+@click.command()
+@click.argument('labelid',required = False)
+@click.argument('pagetoken',required = False)
+@click.argument('displaycount',required = False)
+def get_mails(labelid,pagetoken,displaycount):
+    if labelid == None:
+        labelid = 'INBOX'
+    if displaycount == None:
+        displaycount = 10
+    mails = sm.get_messages_info(labelid = labelid,pagetoken = pagetoken,displaycount = displaycount)
+    headings = ['Subject','From','Time','Message Id']
+    printf(mails['messages'],headings)
+
+def printf(li,headings):
+    count = 0
+
+    for x in li:
+        count += 1
+        click.echo(f"{count}.")
+        index = 0
+
+        for i in x:
+            click.echo(f"{headings[index]}: {i}")
+            index += 1
+        click.echo()
+
+@click.command()
+@click.argument('mssgid')
+def getcompletemail(mssgid):
+    mssg = sm.get_message(mssgid)
+    click.echo(mssg)
+        
+
+main.add_command(sendmessage)
 main.add_command(sendmessage_attach)
 main.add_command(relogin)
 main.add_command(deleteapicreds)
 main.add_command(udetails)
 main.add_command(umdetails)
 main.add_command(sendhtml)
+main.add_command(getlabels)
+main.add_command(get_mails)
+main.add_command(getcompletemail)
 main()

@@ -18,6 +18,7 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import mimetypes
+import mailparser
 SCOPES = ['https://www.googleapis.com/auth/gmail.send','https://www.googleapis.com/auth/gmail.readonly']
 def credentialcreater():
     """Shows basic usage of the Gmail API.
@@ -164,6 +165,65 @@ def GetAttachments( msg_id, store_dir):
         f.write(file_data)
         f.close()
 
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)
+def GetLabels():
+  try:
+    labels = creds.labels().list(userId="me").execute()
+    return labels
+  except errors.HttpError as error:
+     print('An error occurred: %s' % error)
+def get_message(mssgid):
+  try:
+    raw_mssg = creds.messages().get(userId = "me",id = mssgid,format='raw').execute()
+    mssg = mailparser.parse_from_string(base64.urlsafe_b64decode(raw_mssg['raw']).decode('utf-8'))
+    return f'From: {[" ".join(x) for x in mssg.from_][0]}\nDate: {mssg.date}\nSubject: {mssg.subject}\nBody: {mssg.body}\nMssgId: {mssgid}' 
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)
+def get_message_raw(mssgid):
+  try:
+    raw_mssg = creds.messages().get(userId = "me",id = mssgid,format='raw').execute()
+    return base64.urlsafe_b64decode(raw_mssg['raw']).decode('utf-8')
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)
+
+def get_message_ids(labelid = "INBOX",pagetoken = None):
+  try:
+    if pagetoken:
+      mssg_ids = creds.messages().list(userId="me",labelIds=labelid,pageToken = pagetoken).execute()
+    else:
+      mssg_ids = creds.messages().list(userId="me",labelIds=labelid).execute()
+    return mssg_ids
+  except errors.HttpError as error:
+    print('An error occurred: %s' % error)
+
+def get_messages_info(labelid = "INBOX",pagetoken = None,displaycount = 10):
+  try:
+    
+    if pagetoken != None:
+      mssg_ids = creds.messages().list(userId="me",labelIds=labelid,pageToken = pagetoken).execute()
+    else:
+      mssg_ids = creds.messages().list(userId="me",labelIds=labelid).execute()
+    list_messages = []
+    d = {}
+    count_mssg_ids = len(mssg_ids['messages'])
+    if count_mssg_ids < displaycount:
+      mssg_ids = mssg_ids['messages']
+      d['nextpagetoken'] = None
+    elif displaycount<0:
+      mssg_ids = []
+    elif displaycount == count_mssg_ids:
+      mssg_ids = mssg_ids['messages']
+      d['nextpagetoken'] = mssg_ids["nextPageToken"]
+    else:
+      mssg_ids = mssg_ids['messages'][0:displaycount]
+      d['nextpagetoken'] = None
+    for x in mssg_ids:
+      raw_mssg = get_message_raw(x['id'])
+      mssg = mailparser.parse_from_string(raw_mssg)
+      list_messages += [[mssg.subject,[" ".join(x) for x in mssg.from_][0],str(mssg.date),x['id']]]
+    d['messages'] = list_messages
+    return d
   except errors.HttpError as error:
     print('An error occurred: %s' % error)
 creds = credentialcreater()
