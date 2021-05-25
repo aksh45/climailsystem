@@ -176,14 +176,14 @@ def GetLabels():
 def get_message(mssgid):
   try:
     raw_mssg = creds.messages().get(userId = "me",id = mssgid,format='raw').execute()
-    mssg = mailparser.parse_from_string(base64.urlsafe_b64decode(raw_mssg['raw']).decode('utf-8'))
+    mssg = mailparser.parse_from_bytes(base64.urlsafe_b64decode(raw_mssg['raw'].encode('UTF-8')))
     return f'From: {[" ".join(x) for x in mssg.from_][0]}\nDate: {mssg.date}\nSubject: {mssg.subject}\nBody: {mssg.body}\nMssgId: {mssgid}' 
   except errors.HttpError as error:
     print('An error occurred: %s' % error)
 def get_message_raw(mssgid):
   try:
     raw_mssg = creds.messages().get(userId = "me",id = mssgid,format='raw').execute()
-    return base64.urlsafe_b64decode(raw_mssg['raw']).decode('utf-8')
+    return base64.urlsafe_b64decode(raw_mssg['raw'].encode('UTF-8'))
   except errors.HttpError as error:
     print('An error occurred: %s' % error)
 
@@ -220,7 +220,7 @@ def get_messages_info(labelid = "INBOX",pagetoken = None,displaycount = 10):
       d['nextpagetoken'] = None
     for x in mssg_ids:
       raw_mssg = get_message_raw(x['id'])
-      mssg = mailparser.parse_from_string(raw_mssg)
+      mssg = mailparser.parse_from_bytes(raw_mssg)
       list_messages += [[mssg.subject,[" ".join(x) for x in mssg.from_][0],str(mssg.date),x['id']]]
     d['messages'] = list_messages
     return d
